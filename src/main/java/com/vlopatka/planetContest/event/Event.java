@@ -10,10 +10,6 @@ public class Event {
     public final long userId;
     public final Type type;
 
-    public enum Type {
-        CONTEST_FINISHED
-    }
-
     public Event(long userId, Type type) {
         this.userId = userId;
         this.type = type;
@@ -36,6 +32,10 @@ public class Event {
     @Override
     public String toString() {
         return reflectionToString(this, SHORT_PREFIX_STYLE);
+    }
+
+    public enum Type {
+        CONTEST_FINISHED
     }
 
 }
