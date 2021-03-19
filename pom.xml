@@ -25,11 +25,11 @@
             <version>18.0</version>
         </dependency>
 
-<!--        tests-->
+        <!--tests-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.8.0-M1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
