@@ -6,11 +6,11 @@ import com.vlopatka.planetContest.event.Event;
 import com.vlopatka.planetContest.service.ContinentAssigner;
 import com.vlopatka.planetContest.service.DefaultContinentAssigner;
 import com.vlopatka.planetContest.service.PlanetInfoProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,10 +25,10 @@ import static com.google.common.collect.Sets.newHashSet;
 import static com.vlopatka.planetContest.event.Event.Type.CONTEST_FINISHED;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.LongStream.range;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ContinentAssignerTest {
 
     @Mock
@@ -36,7 +36,7 @@ public class ContinentAssignerTest {
 
     private ContinentAssigner continentAssigner;
 
-    @Before
+    @BeforeEach
     public void configure() {
         when(planetInfoProvider.get()).thenReturn(
                 new Planet(3L, "Earth", newHashSet(
@@ -76,7 +76,7 @@ public class ContinentAssignerTest {
         }
 
         // then
-        assertEquals("Expected " + expectedEvents.size() + " events, got " + actualEvents.size(), expectedEvents.size(), actualEvents.size());
+        assertEquals(expectedEvents.size(), actualEvents.size());
     }
 
     private List<Long> generateUserIds(long size) {

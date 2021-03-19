@@ -28,7 +28,7 @@ public class DefaultContinentAssigner implements ContinentAssigner {
     @Override
     public void assignContinent(long userId, long continentId) {
         userToContestStore.putIfAbsent(userId, initContest());
-        userToContestStore.compute(userId, (k, v) -> addContinent(k, continentId, v));
+        userToContestStore.compute(userId, (userIdAsKey, contest) -> addContinent(userIdAsKey, continentId, contest));
     }
 
     private ContestDto addContinent(long userId, long continentId, ContestDto contestDto) {
