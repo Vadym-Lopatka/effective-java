@@ -27,26 +27,28 @@ public class DefaultContinentAssigner implements ContinentAssigner {
 
     @Override
     public void assignContinent(long userId, long continentId) {
-        userToContestStore.putIfAbsent(userId, initContest());
-        userToContestStore.compute(userId, (k, v) -> addContinent(k, continentId, v));
+        userToContestStore.compute(userId, (k, v) -> processAssign(k, continentId, v));
     }
 
-    private ContestDto addContinent(long userId, long continentId, ContestDto contestDto) {
+    private ContestDto processAssign(long userId, long continentId, ContestDto contestDtoOpt) {
+        ContestDto contestDto = Optional.ofNullable(contestDtoOpt).orElse(initContest());
+        return (contestDto.isFinished) ? contestDto : addContinent(userId, getContinentById(continentId), contestDto);
+    }
 
-        final Set<Continent> userContinents = contestDto.planet.continents;
-        userContinents.add(getContinentById(continentId));
+    private ContestDto addContinent(long userId, Continent continent, ContestDto contestDto) {
 
-        if (!contestDto.isFinished) {
-            final Set<Continent> allPlanetContinents = planetInfoProvider.get().continents;
+        contestDto.planet.continents.add(continent);
 
-            if (userContinents.equals(allPlanetContinents)) {
-                contestDto.isFinished = true;
-                notifyAllConsumers(new Event(userId, Event.Type.CONTEST_FINISHED));
-            }
+        if (isContestFinished(contestDto.planet.continents)) {
+            contestDto.isFinished = true;
+            notifyAllConsumers(new Event(userId, Event.Type.CONTEST_FINISHED));
         }
 
-        userToContestStore.put(userId, contestDto);
         return contestDto;
+    }
+
+    private boolean isContestFinished(Set<Continent> userContinents) {
+        return userContinents.equals(planetInfoProvider.get().continents);
     }
 
     private ContestDto initContest() {
@@ -61,7 +63,6 @@ public class DefaultContinentAssigner implements ContinentAssigner {
         final Optional<Continent> optCard = planetInfoProvider.get().continents.stream().filter(continent -> continent.id == continentId).findFirst();
         return optCard.orElseThrow(() -> new IllegalArgumentException("Non existed continentId: " + continentId));
     }
-
 
     @Override
     public void subscribe(Consumer<Event> consumer) {
