@@ -27,12 +27,12 @@ public class DefaultContinentAssigner implements ContinentAssigner {
 
     @Override
     public void assignContinent(long userId, long continentId) {
-        userToContestStore.putIfAbsent(userId, initContest());
+//        userToContestStore.putIfAbsent(userId, initContest());
         userToContestStore.compute(userId, (k, v) -> addContinent(k, continentId, v));
     }
 
-    private ContestDto addContinent(long userId, long continentId, ContestDto contestDto) {
-
+    private ContestDto addContinent(long userId, long continentId, ContestDto contestDtoOpt) {
+        final ContestDto contestDto = Optional.ofNullable(contestDtoOpt).orElse(initContest());
         final Set<Continent> userContinents = contestDto.planet.continents;
         userContinents.add(getContinentById(continentId));
 
@@ -45,7 +45,6 @@ public class DefaultContinentAssigner implements ContinentAssigner {
             }
         }
 
-        userToContestStore.put(userId, contestDto);
         return contestDto;
     }
 
